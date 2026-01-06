@@ -189,7 +189,7 @@ public class PlayerAttack : MonoBehaviour
         attackCombo = Mathf.Clamp(attackCombo, 0, 3);
         isAttacking = true;
 
-        playerrb.velocity = new Vector2(0, 0);
+        playerrb.linearVelocity = new Vector2(0, 0);
 
         
     }

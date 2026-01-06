@@ -33,14 +33,14 @@ public class BackgroundScript : MonoBehaviour
 
     void updateBackground()
     {
-        if(playerT.GetComponent<Rigidbody2D>().velocity.x >= 1)
+        if(playerT.GetComponent<Rigidbody2D>().linearVelocity.x >= 1)
         {
             for(int i = 0; i < speed.Length; i++)
             {
                 background[i].Translate(-1* speed[i] * Time.deltaTime, 0, 0);
             }
         }
-        else if(playerT.GetComponent<Rigidbody2D>().velocity.x <= -1)
+        else if(playerT.GetComponent<Rigidbody2D>().linearVelocity.x <= -1)
         {
             for(int i = 0; i < speed.Length; i++)
             {
@@ -58,11 +58,11 @@ public class BackgroundScript : MonoBehaviour
 
     void moveBackgroundPos(Transform temp)
     {
-        if(playerT.GetComponent<Rigidbody2D>().velocity.x >= 1)
+        if(playerT.GetComponent<Rigidbody2D>().linearVelocity.x >= 1)
         {
             temp.position = new Vector2(temp.position.x + maxDistance,0);
         }
-        else if (playerT.GetComponent<Rigidbody2D>().velocity.x <= -1)
+        else if (playerT.GetComponent<Rigidbody2D>().linearVelocity.x <= -1)
         {
             temp.position = new Vector2(temp.position.x - maxDistance, 0);
         }

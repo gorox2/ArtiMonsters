@@ -45,7 +45,7 @@ public class playerMove : MonoBehaviour
 
     private void FixedUpdate()
     {
-        playerRb.velocity = new Vector2((moveDir * speed) + dashforce, playerRb.velocity.y);
+        playerRb.linearVelocity = new Vector2((moveDir * speed) + dashforce, playerRb.linearVelocity.y);
         
     }
 
@@ -72,7 +72,7 @@ public class playerMove : MonoBehaviour
     {
         if (onGround == true && Input.GetButtonDown("Jump"))
         {
-            playerRb.velocity = new Vector2(playerRb.velocity.x, jumpforce);
+            playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, jumpforce);
             onGround = false;
             dashforce = 0;
             anim.SetBool("isjump", true);
@@ -90,7 +90,7 @@ public class playerMove : MonoBehaviour
             
             anim.SetBool("isjump", false);
             anim.SetBool("isfall", false);
-            playerRb.velocity = new Vector2(playerRb.velocity.x, jumpforce * 0.7f);         
+            playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, jumpforce * 0.7f);         
         }
     }
 

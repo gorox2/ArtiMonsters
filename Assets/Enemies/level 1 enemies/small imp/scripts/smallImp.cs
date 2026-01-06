@@ -80,7 +80,7 @@ public class smallImp : MonoBehaviour
     {
         anim.SetBool("iswalk", true);
         Vector2 direction = (playerPos.position - transform.position).normalized;
-        impRb.velocity = new Vector2( direction.x * speed, impRb.velocity.y);
+        impRb.linearVelocity = new Vector2( direction.x * speed, impRb.linearVelocity.y);
 
         if (transform.position.x - playerPos.position.x > 0)
         {
@@ -117,7 +117,7 @@ public class smallImp : MonoBehaviour
             anim.SetTrigger("atk1");
             attackNum = 1;
             time = 0;
-            impRb.velocity =Vector2.zero;
+            impRb.linearVelocity =Vector2.zero;
 
         }
         else if(time >= timeBetweenATKs && attackNum == 1)
@@ -126,7 +126,7 @@ public class smallImp : MonoBehaviour
             anim.SetTrigger("atk2");
             attackNum = 0;
             time = 0;
-            impRb.velocity = Vector2.zero;
+            impRb.linearVelocity = Vector2.zero;
 
         }
 
