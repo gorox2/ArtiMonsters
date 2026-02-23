@@ -5,185 +5,273 @@ using UnityEngine;
 
 public class playerMove : MonoBehaviour
 {
-     Rigidbody2D playerRb;
-    Animator anim;
-    TrailRenderer dashtrail;
+    Animator animator;
+    [Header("Movement")]
+    public float moveSpeed = 8f;
+    public float airAcceleration = 20f;
+    public float airMoveSpeed = 8f;
+    public float jumpForce = 12f;
+    public float dashForce = 10f;
+    public float dash = 0f;
+    public float dashTime = 0.2f;
+    public float dashCooldown = 0.5f;
 
-    float moveDir;
-    public float speed;
-    public float jumpforce;
-    public float dashforce;
-
-    public Vector2 rayBoxSize;
-    public float castDistance;
+    [Header("Ground Check")]
+    public Transform groundCheck;
+    public float groundCheckRadius = 0.15f;
     public LayerMask groundLayer;
+    public float jumpUngroundTime = 0.12f;  
+    float jumpUngroundTimer;
 
-   public static bool onGround;
-    bool can2jump = true;
-    bool canDash = true;
-    float dashtimer = 0;
+    [Header("Slope")]
+    public float stickToGroundForce = 8f;
+    public float maxSlopeAngle = 60f;
 
-   public AnimationClip frame;
-    // Start is called before the first frame update
-    void Start()
+    Rigidbody2D rb;
+
+    public bool isGrounded;
+    bool jumpedThisFrame;
+    bool canDash;
+
+    Vector2 slopeNormal = Vector2.up;
+    PlayerAttack playerAttack;
+    MovingPlatform2D groundPlatform;
+
+    public bool canMove;
+    float moveInput;
+
+    void Awake()
     {
-        playerRb = GetComponent<Rigidbody2D>(); 
-        anim = GetComponent<Animator>();
-        dashtrail = GetComponent<TrailRenderer>();  
+        playerAttack = GetComponent<PlayerAttack>();
+        rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        rb.freezeRotation = true;
     }
-
-    // Update is called once per frame
+    private void Start()
+    {
+        canDash = true;
+        canMove = true;
+    }
     void Update()
     {
-        run();
-        death();
-        grounded();
-        jump();
-        dash();
-        knockback();
-    }
-
-    private void FixedUpdate()
-    {
-        playerRb.linearVelocity = new Vector2((moveDir * speed) + dashforce, playerRb.linearVelocity.y);
-        
-    }
-
-    void run()
-    {
-        moveDir = Input.GetAxis("Horizontal");
-        if (moveDir > 0.1f)
-        { 
-            transform.localScale = new Vector2(2,2);
-            if (onGround) { anim.SetBool("isrun", true); }
-        }
-        else if (moveDir < -0.1f)
+        if (!canMove)
         {
-            transform.localScale = new Vector2(-2,2);
-            if (onGround) { anim.SetBool("isrun", true); }
+            animator.SetFloat("movement", 0f);
+            return;
         }
-        else
+        moveInput = Input.GetAxisRaw("Horizontal");
+        if (moveInput != 0) { transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * moveInput, transform.localScale.y, transform.localScale.z); }
+        if (Input.GetButtonDown("Jump") && !playerAttack.isAttacking)
+            Jump();
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            anim.SetBool("isrun", false);
+            Dash();
         }
     }
 
-    void jump()
+    void FixedUpdate()
     {
-        if (onGround == true && Input.GetButtonDown("Jump"))
+        if (!canMove)
         {
-            playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, jumpforce);
-            onGround = false;
-            dashforce = 0;
-            anim.SetBool("isjump", true);
-            anim.SetBool("Djump", false);
+            rb.linearVelocity = Vector3.zero;
+            return;
         }
+        if (jumpUngroundTimer > 0f)
+            jumpUngroundTimer -= Time.fixedDeltaTime;
 
-        else if (onGround == false && can2jump && Input.GetButtonDown("Jump"))
+        CheckGround();
+
+
+        // if press jump button - ignore movement for first frame, otherwise it will stick to the slope
+        if (jumpedThisFrame)
         {
-            can2jump = false;
-            dashforce = 0;
-            if (!can2jump)
-            {
-                anim.SetBool("Djump", true);
-            }
+            jumpedThisFrame = false;
             
-            anim.SetBool("isjump", false);
-            anim.SetBool("isfall", false);
-            playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, jumpforce * 0.7f);         
         }
+
+        // handle movement, including sticking to slope
+        HandleMovement();
+
+        
     }
 
-    void grounded()
-    {
-        RaycastHit2D raycast = Physics2D.BoxCast(transform.position, rayBoxSize, 0, -transform.up, castDistance, groundLayer);
-        if (raycast.collider != null)
-        {
-            onGround = true;
-            can2jump = true;
+    // ---------------- GROUND CHECK ----------------
 
-            anim.SetBool("isfall", false);
-            anim.SetBool("isjump", false);
+    void CheckGround()
+    {
+        // ignore regrounding for a short time after jump starts
+        if (jumpUngroundTimer > 0f)
+        {
+            isGrounded = false;
+            groundPlatform = null;
+            slopeNormal = Vector2.up;
+            animator.SetBool("inAir", true);
+            return;
+        }
+
+        Collider2D col = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+
+       
+        if (col)
+        {
+            isGrounded = true;
+            animator.SetBool("inAir", false);
+            groundPlatform = col.GetComponent<MovingPlatform2D>();
+            if (groundPlatform == null)
+                groundPlatform = col.GetComponentInParent<MovingPlatform2D>();
+
+
+            // if on ground - make raycast to it to find the normal of the ground
+            RaycastHit2D hit = Physics2D.Raycast(groundCheck.position, Vector2.down, 0.6f, groundLayer);
+
+            if (hit)
+                slopeNormal = hit.normal;
         }
         else
         {
-            onGround = false; 
-                  
-            anim.SetBool("isrun", false);
-            if (anim.GetBool("Djump") == false)
-            {
-                anim.SetBool("isfall", true);
-            }
+            isGrounded = false;
+            groundPlatform = null;
+            slopeNormal = Vector2.up;
+            animator.SetBool("inAir", true);
         }
-
     }
 
-    public void fall()
+    // ---------------- MOVEMENT ----------------
+
+    void HandleMovement()
     {
-        anim.SetBool("isjump", false);
-        anim.SetBool("isfall", true);
-        anim.SetBool("Djump", false);
+        Vector2 platformDelta = Vector2.zero;
 
-    }
+        // if player on moving platform - use the velocity of the platform as offset for the player's velocity 
+        if (groundPlatform != null)
+            platformDelta = groundPlatform.Velocity;
 
-    
+        Vector2 v = rb.linearVelocity;
 
-    void dash()
-    {
-        if (canDash == true  &&  Input.GetKeyDown(KeyCode.LeftShift)) 
+        if (isGrounded)
         {
-            dashtrail.emitting = true;
-            anim.SetBool("isrun", false);
-            if (transform.localScale.x > 0)
-            {
-                dashforce = 10f;
-                
-            } 
-            if (transform.localScale.x < 0)
-            {
-                dashforce = -10f;
-                
-            }
-            if (onGround)
-            {
-                anim.SetBool("isdash", true);
+            //move according to input on x + velocity offset from platform
+            float x = moveInput * moveSpeed  + dash;
+            v.x = x + platformDelta.x;
+            // maintain the velocity on y (because the player is on the platform and moves with it already)
+            if (jumpUngroundTimer <= 0f)
+                if (platformDelta.y > v.y)
+                    v.y = platformDelta.y;
 
+            rb.linearVelocity = v;
+
+            animator.SetFloat("movement", Mathf.Abs(moveInput));
+
+            float slopeAngle = Vector2.Angle(slopeNormal, Vector2.up);
+            bool onWalkableSlope = slopeAngle > 0.1f && slopeAngle <= maxSlopeAngle;
+            // Stick player slightly to slope by adding force every frame - in opposite direction of slope normal (it pushes against the slope)
+            if (jumpUngroundTimer <= 0f && onWalkableSlope)
+            {
+                Debug.Log("applying slope force");
+                
+                Vector2 intoSlope = -slopeNormal * (stickToGroundForce);
+                rb.AddForce(intoSlope, ForceMode2D.Force);
             }
-            else { anim.SetBool("airdash", true); }
         }
-        
+        else
+        {
+            //move according to input on x + velocity offset from platform
+            v.x += moveInput * airAcceleration * Time.fixedDeltaTime;
+            v.x = Mathf.Clamp(v.x, -airMoveSpeed, airMoveSpeed);
+
+            // maintain the velocity on y (because the player is on the platform and moves with it already)
+            float y = rb.linearVelocity.y;
+
+
+            //rb.linearVelocity = v.x < 0 ? new Vector2(v.x + (Time.fixedDeltaTime * airMoveSpeed), y) : new Vector2(v.x - (Time.fixedDeltaTime * airMoveSpeed), y);
+            rb.linearVelocity = v;
+
+        }
+
     }
 
-    public void stopdash()
+    // ---------------- JUMP ----------------
+
+    void Jump()
     {
-        dashforce = 0;
-        anim.SetBool("isdash", false);
-        anim.SetBool("airdash", false);
+        // prevent jumping if is in the air
+        if (!isGrounded)
+            return;
+        
+        jumpedThisFrame = true;
+        isGrounded = false;
+        groundPlatform = null;
+
+        jumpUngroundTimer = jumpUngroundTime;
+
+        // maintain the velocity on x when jumping
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
+
+        // give impulse upward
+        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+
+        animator.SetTrigger("jump");
+    }
+
+    // ---------------- DEBUG ----------------
+
+    // gizmos will be shown in scene tab, if select the player
+    void OnDrawGizmosSelected()
+    {
+        if (!groundCheck) return;
+
+        // will show sphere collider that detects the collision of player's feet 
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+
+        // will show the normal from the ground
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(groundCheck.position, groundCheck.position + (Vector3)slopeNormal);
+    }
+
+    bool IsSlopeWalkable()
+    {
+        float angle = Vector2.Angle(slopeNormal, Vector2.up);
+        return angle > 0.1f && angle <= maxSlopeAngle;
+    }
+
+    void Dash()
+    {
+        if (!isGrounded) return;
+
+        if (canDash)
+        {
+            
+            animator.SetTrigger("dash");
+            StartCoroutine(Dashing());
+        }
+
+
+    }
+
+    IEnumerator Dashing()
+    {
         canDash = false;
-        dashtrail.emitting = false;
-        while (dashtimer < 1)
+        float timer = 0f;
+        while (timer <= dashTime)
         {
-            dashtimer += Time.deltaTime;
+            timer += Time.deltaTime;
+            dash = transform.localScale.x * dashForce;
+            yield return null;
         }
-        if (dashtimer > 0)
-        {
-            canDash = true;
-            dashtimer = 0;
+        timer = 0f;
+        dash = 0;
+        while (timer <= dashCooldown)
+        {  
+            timer += Time.deltaTime;
+            yield return null;
         }
-        
-
-    }
-    void knockback()
-    {
-
+        canDash = true;
     }
 
-    void death()
-    {
-        
-    }
 
-    
 
-    
 }
+
+

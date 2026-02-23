@@ -2,11 +2,12 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags:
   - ground
   - Platforms
   - enemy
+  - Boss
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - enemies
   - Player
   - collectable
-  - 
+  - background
   - 
   - 
   - 
@@ -44,10 +45,10 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: 0
+  - name: backgrounds
     uniqueID: 3173757383
     locked: 0
-  - name: 1
+  - name: map
     uniqueID: 1520149357
     locked: 0
   - name: 2
@@ -59,7 +60,7 @@ TagManager:
   - name: 4
     uniqueID: 2034364609
     locked: 0
-  - name: New Layer 6
+  - name: collectables
     uniqueID: 52605687
     locked: 0
   - name: New Layer 7
@@ -68,3 +69,5 @@ TagManager:
   - name: UI
     uniqueID: 1889415049
     locked: 0
+  m_RenderingLayers:
+  - Default
