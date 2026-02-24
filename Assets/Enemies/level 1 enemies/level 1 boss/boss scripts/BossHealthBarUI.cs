@@ -20,7 +20,7 @@ public class BossHealthBarUI : MonoBehaviour
 
     private void OnDisable()
     {
-        
+
         DisconnectFromHealth();
     }
 
@@ -36,6 +36,7 @@ public class BossHealthBarUI : MonoBehaviour
 
     public void Hide()
     {
+        Debug.Log("boss UI hidden");
         DisconnectFromHealth();
         gameObject.SetActive(false);
     }

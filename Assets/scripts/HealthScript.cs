@@ -80,7 +80,7 @@ public class HealthScript : MonoBehaviour
         EmitHealthChanged();
     }
 
-    void EmitHealthChanged()
+    public void EmitHealthChanged()
     {
         onHealthChanged?.Invoke(currentHealth, maxHealth);
     }
