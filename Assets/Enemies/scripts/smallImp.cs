@@ -121,6 +121,7 @@ public class smallImp : MonoBehaviour
         if (absDx >= chaseStopDistance || !CanMoveInDirection(moveDir))
         {
             SetMove(0f);
+            state = State.Patrol;
             return;
         }
         // Flip
