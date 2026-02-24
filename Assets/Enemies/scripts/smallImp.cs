@@ -40,7 +40,12 @@ public class smallImp : MonoBehaviour
     public Transform playerPos;
     [SerializeField] float radius;
     [SerializeField] private float chaseStopDistance = 1.0f;
-    
+
+    [Header("Ledge Detection")]
+    [SerializeField] Transform ledgeCheck;
+    [SerializeField] Vector2 ledgeCheckSize;
+    [SerializeField] LayerMask groundLayer;
+    [SerializeField] bool stopAtEdges = true;
 
     [Header("Combat")]
     [SerializeField] LayerMask playerLayer;
@@ -112,7 +117,8 @@ public class smallImp : MonoBehaviour
         // Decide chase vs attack
         float dx = playerPos.position.x - transform.position.x;
         float absDx = Mathf.Abs(dx);
-        if (absDx >= chaseStopDistance)
+        float moveDir = Mathf.Sign(dx);
+        if (absDx >= chaseStopDistance || !CanMoveInDirection(moveDir))
         {
             SetMove(0f);
             return;
@@ -130,7 +136,7 @@ public class smallImp : MonoBehaviour
 
         // Chase
         state = State.ChaseTarget;
-        float moveDir = Mathf.Sign(dx);
+        
         SetMove(moveDir);
     }
 
@@ -164,7 +170,18 @@ public class smallImp : MonoBehaviour
         transform.localScale = new Vector3(x, transform.localScale.y, transform.localScale.z);
     }
 
-   
+    private bool HasGroundAheadOverlap(float dirSign)
+    {
+        Vector2 p = (Vector2)ledgeCheck.position + Vector2.right * dirSign * 0.15f;
+        return Physics2D.OverlapBox(p, ledgeCheckSize, groundLayer) != null;
+    }
+
+    private bool CanMoveInDirection(float dirSign)
+    {
+        if (stopAtEdges && !HasGroundAheadOverlap(dirSign)) return false;
+        
+        return true;
+    }
 
     private void AcquireTargetIfNeeded()
     {
@@ -300,6 +317,10 @@ public class smallImp : MonoBehaviour
     {
         Gizmos.DrawWireSphere(transform.position, radius);
         Gizmos.DrawCube(hitPos.position, hitBoxSize);
+
+        if (ledgeCheck != null)
+            Gizmos.DrawCube(ledgeCheck.position, ledgeCheckSize);
+
     }
 }
 

@@ -9,7 +9,7 @@ public class playerMove : MonoBehaviour
     const string INAIR = "inAir";
     const string DEAD = "isdead";
     const string HIT = "isHit";
-    const string COOLDOWN = "isInCooldown";
+    const string JUMP = "jump";
 
 
     Animator animator;
@@ -113,7 +113,7 @@ public class playerMove : MonoBehaviour
             isGrounded = false;
             groundPlatform = null;
             slopeNormal = Vector2.up;
-            //animator.SetBool(INAIR, true);
+            
             return;
         }
 
@@ -140,7 +140,7 @@ public class playerMove : MonoBehaviour
             isGrounded = false;
             groundPlatform = null;
             slopeNormal = Vector2.up;
-            animator.SetBool("inAir", true);
+            animator.SetBool(INAIR, true);
         }
     }
 
@@ -168,7 +168,7 @@ public class playerMove : MonoBehaviour
 
             rb.linearVelocity = v;
 
-            animator.SetFloat("movement", Mathf.Abs(moveInput));
+            animator.SetFloat(MOVEMENT, Mathf.Abs(moveInput));
 
             float slopeAngle = Vector2.Angle(slopeNormal, Vector2.up);
             bool onWalkableSlope = slopeAngle > 0.1f && slopeAngle <= maxSlopeAngle;
@@ -218,7 +218,7 @@ public class playerMove : MonoBehaviour
         // give impulse upward
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
-        animator.SetTrigger("jump");
+        animator.SetTrigger(JUMP);
     }
 
     // ---------------- DEBUG ----------------
@@ -237,11 +237,6 @@ public class playerMove : MonoBehaviour
         Gizmos.DrawLine(groundCheck.position, groundCheck.position + (Vector3)slopeNormal);
     }
 
-    bool IsSlopeWalkable()
-    {
-        float angle = Vector2.Angle(slopeNormal, Vector2.up);
-        return angle > 0.1f && angle <= maxSlopeAngle;
-    }
 
     void Dash()
     {

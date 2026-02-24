@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2978153202450363026
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1284606280619748832}
+  m_Layer: 7
+  m_Name: ledge check
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1284606280619748832
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2978153202450363026}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.284, y: -0.185, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6434266169418941167}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4494621143923116503
 GameObject:
   m_ObjectHideFlags: 0
@@ -69,6 +100,7 @@ Transform:
   m_Children:
   - {fileID: 7842200855096559140}
   - {fileID: 3041357845364919068}
+  - {fileID: 1284606280619748832}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3361298257061767417
@@ -233,6 +265,12 @@ MonoBehaviour:
   playerPos: {fileID: 0}
   radius: 7
   chaseStopDistance: 20
+  ledgeCheck: {fileID: 1284606280619748832}
+  ledgeCheckSize: {x: 0.5, y: 0.4}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  stopAtEdges: 1
   playerLayer:
     serializedVersion: 2
     m_Bits: 0
