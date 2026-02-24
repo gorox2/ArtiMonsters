@@ -206,7 +206,7 @@ Transform:
   m_GameObject: {fileID: 2589929}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.773099, y: -0.52999985, z: -10}
+  m_LocalPosition: {x: -6.7734566, y: -0.52999985, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -353,7 +353,7 @@ MonoBehaviour:
   boss: {fileID: 1740543747}
   bossUI: {fileID: 2123707383}
   bossTrigger: {fileID: 3152835}
-  bossDeathReset: {fileID: 0}
+  bossDeathReset: {fileID: 1897189103}
   introDelay: 0.5
   freezePlayerDuringIntro: 1
   playerMovementScript: {fileID: 1658963681}
@@ -89107,7 +89107,7 @@ Transform:
   m_GameObject: {fileID: 820538678}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.773099, y: -0.52999985, z: -10}
+  m_LocalPosition: {x: -6.7734566, y: -0.52999985, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -89178,7 +89178,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 86, y: 13.000015}
+  m_AnchoredPosition: {x: 86, y: 13.0000305}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &895882019
@@ -90589,7 +90589,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveDirection: {x: 0, y: 1}
   moveDistance: 13
-  speed: 0.25
+  maxSpeed: 2
+  acceleration: 3
+  decelDistance: 0.5
   isMoving: 0
 --- !u!50 &1264189124
 Rigidbody2D:
@@ -91788,6 +91790,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 600, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1897189103 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3953346605463174621, guid: 8acc841008f7a14439cb3062e9adc967, type: 3}
+  m_PrefabInstance: {fileID: 2920585885598211166}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33cc90d93533e4f4dba71cedb2247b51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1926652137
 GameObject:
   m_ObjectHideFlags: 0

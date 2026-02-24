@@ -86,6 +86,7 @@ public class BossFightManager : MonoBehaviour
         bossDead = false;
         if (boss != null)
         {
+            Debug.Log("boss manager reseting controler");
             boss.ResetBossFight();
             boss.gameObject.SetActive(false); 
         }

@@ -17,7 +17,7 @@ MonoBehaviour:
   cooldown: 2
   minRange: 0
   maxRange: 10
-  damage: 20
+  damage: 25
   boxSize: {x: 5.1, y: 2.34}
   boxDistance: 1
   targetLayer:

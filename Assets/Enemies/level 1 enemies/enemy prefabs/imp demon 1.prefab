@@ -375,11 +375,9 @@ MonoBehaviour:
   canMove: 0
   isDead: 0
   canAttack: 0
-  speed: 50
-  direction: {x: 0, y: 0}
+  speed: 2
   playerPos: {fileID: 0}
   radius: 7
-  visionDistance: 10
   chaseStopDistance: 20
   playerLayer:
     serializedVersion: 2

@@ -14,9 +14,10 @@ public class BossDeathReset : MonoBehaviour, IDeathResettable
         startRot = transform.rotation;
         health = GetComponent<HealthScript>();
     }
-
+   
     public void ResetOnPlayerDeath()
     {
+        Debug.Log("reseting player processing");
         // If boss is defeated, keep it dead
         if (LevelManager.Instance != null && LevelManager.Instance.BossDefeated)
         {
@@ -31,13 +32,13 @@ public class BossDeathReset : MonoBehaviour, IDeathResettable
         if (health != null)
         {
             health.currentHealth = health.maxHealth;
-            health.HandleHealthBar();
+            health.EmitHealthChanged();
         }
 
         
          onDeathReset?.Invoke();
 
         
-        gameObject.SetActive(false);
+      
     }
 }

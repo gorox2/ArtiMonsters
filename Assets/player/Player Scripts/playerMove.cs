@@ -5,6 +5,13 @@ using UnityEngine;
 
 public class playerMove : MonoBehaviour
 {
+    const string MOVEMENT = "movement";
+    const string INAIR = "inAir";
+    const string DEAD = "isdead";
+    const string HIT = "isHit";
+    const string COOLDOWN = "isInCooldown";
+
+
     Animator animator;
     [Header("Movement")]
     public float moveSpeed = 8f;
@@ -56,7 +63,7 @@ public class playerMove : MonoBehaviour
     {
         if (!canMove)
         {
-            animator.SetFloat("movement", 0f);
+            animator.SetFloat(MOVEMENT, 0f);
             return;
         }
         moveInput = Input.GetAxisRaw("Horizontal");
@@ -74,7 +81,7 @@ public class playerMove : MonoBehaviour
     {
         if (!canMove)
         {
-            rb.linearVelocity = Vector3.zero;
+            rb.linearVelocity = new Vector2(0f,rb.linearVelocity.y) ;
             return;
         }
         if (jumpUngroundTimer > 0f)
@@ -106,7 +113,7 @@ public class playerMove : MonoBehaviour
             isGrounded = false;
             groundPlatform = null;
             slopeNormal = Vector2.up;
-            animator.SetBool("inAir", true);
+            //animator.SetBool(INAIR, true);
             return;
         }
 
@@ -246,7 +253,6 @@ public class playerMove : MonoBehaviour
             animator.SetTrigger("dash");
             StartCoroutine(Dashing());
         }
-
 
     }
 
