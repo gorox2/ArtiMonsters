@@ -4,6 +4,7 @@ a casual action 2D platformer with souls-like and puzzle elements, where the pla
 ## Tools
 made using Unity Engine and assets from itch.io
 
+## Gameplay demo showcase
 Watch the gameplay demo here:
 https://youtu.be/ggeyhjn9Fmo?si=Hf4m--3mgc5kHVW0
 
